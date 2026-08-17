@@ -1,0 +1,69 @@
+@host = http://localhost:5080
+
+### Dashboard summary
+GET {{host}}/api/v1/dashboard/summary
+
+### List rooms
+GET {{host}}/api/v1/rooms
+
+### Create a room
+POST {{host}}/api/v1/rooms
+Content-Type: application/json
+
+{
+  "name": "Stue"
+}
+
+### List devices
+GET {{host}}/api/v1/devices
+
+### Register a device (assumes RoomId 1 already exists)
+POST {{host}}/api/v1/devices
+Content-Type: application/json
+
+{
+  "name": "Stue temperatursensor",
+  "type": "temperature",
+  "roomId": 1,
+  "macAddress": "AA:BB:CC:DD:EE:01",
+  "ipv4Address": "192.168.1.42"
+}
+
+### Ingest a valid measurement (assumes DeviceId 1 already exists)
+POST {{host}}/api/v1/sensordata
+Content-Type: application/json
+
+{
+  "deviceId": 1,
+  "sensorType": "temperature",
+  "value": 21.4,
+  "unit": "°C"
+}
+
+### Ingest an out-of-range measurement -> rejected, logged to EventLog instead
+POST {{host}}/api/v1/sensordata
+Content-Type: application/json
+
+{
+  "deviceId": 1,
+  "sensorType": "temperature",
+  "value": 500,
+  "unit": "°C"
+}
+
+### Get 24h history for a device
+GET {{host}}/api/v1/devices/1/history?range=24h
+
+### Send a command to a device (e.g. lamp)
+POST {{host}}/api/v1/devices/1/command
+Content-Type: application/json
+
+{
+  "command": "ON"
+}
+
+### Event log
+GET {{host}}/api/v1/eventlog
+
+### Health check
+GET {{host}}/health
